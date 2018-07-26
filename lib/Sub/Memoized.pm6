@@ -10,8 +10,9 @@ my %EXPORT;
 # all of the trait_mod:<is>'s that cannot be handled here.
 BEGIN my $original_trait_mod_is = &trait_mod:<is>;
 
-module Sub::Memoized:ver<0.0.1>:auth<cpan:ELIZABETH> {
+module Sub::Memoized:ver<0.0.2>:auth<cpan:ELIZABETH> {
 
+    # Create the identification string for the capture to serve as key
     my sub fingerprint(Capture:D $capture --> Str:D) {
         my str @parts = $capture.list.map: *<>.WHICH.Str;
         @parts.push('|');  # don't allow positionals to bleed into nameds
@@ -19,21 +20,17 @@ module Sub::Memoized:ver<0.0.1>:auth<cpan:ELIZABETH> {
             @parts.push( $pair.key );  # key is always a string with nameds
             @parts.push( $pair.value<>.WHICH.Str );
         }
-
         @parts.join('|')
     }
 
-    my sub memoize(\r,\cache --> Nil) {
+    # Perform the actual wrapping of the sub to have it memoized
+    my sub memoize(\r, \cache --> Nil) {
         r.wrap(-> |c {
             my $key := fingerprint(c);
             cache.EXISTS-KEY($key)
               ?? cache.AT-KEY($key)
               !! cache.BIND-KEY($key,callsame);
         });
-
-        # disable optimization
-        use nqp;
-        nqp::bindattr_i(r,Routine,'$!onlystar',0) if r.onlystar;
     }
 
     # Manually mark this proto for export
