@@ -5,7 +5,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [ ],
-  "description" : "trait for limiting number of keys in hashes",
+  "description" : "trait for memoizing calls to subroutines",
   "license" : "Artistic-2.0",
   "name" : "Sub::Memoized",
   "perl" : "6.c",
@@ -18,5 +18,5 @@
     "UTILS"
   ],
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }

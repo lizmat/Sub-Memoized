@@ -3,7 +3,7 @@
 NAME
 ====
 
-Sub::Memoized - trait for limiting number of keys in hashes
+Sub::Memoized - trait for memoizing calls to subroutines
 
 SYNOPSIS
 ========

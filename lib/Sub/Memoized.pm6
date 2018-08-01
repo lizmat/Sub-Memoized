@@ -10,7 +10,7 @@ my %EXPORT;
 # all of the trait_mod:<is>'s that cannot be handled here.
 BEGIN my $original_trait_mod_is = &trait_mod:<is>;
 
-module Sub::Memoized:ver<0.0.2>:auth<cpan:ELIZABETH> {
+module Sub::Memoized:ver<0.0.3>:auth<cpan:ELIZABETH> {
 
     # Create the identification string for the capture to serve as key
     my sub fingerprint(Capture:D $capture --> Str:D) {
@@ -62,7 +62,7 @@ sub EXPORT { %EXPORT }
 
 =head1 NAME
 
-Sub::Memoized - trait for limiting number of keys in hashes
+Sub::Memoized - trait for memoizing calls to subroutines
 
 =head1 SYNOPSIS
 
