@@ -1,16 +1,6 @@
 use v6.c;
 
-# Since we cannot export a proto sub trait_mod:<is> with "is export", we
-# need to do this manually with an EXPORT sub.  So we create a hash here
-# to be set in compilation of the mainline and then return that in the
-# EXPORT sub.
-my %EXPORT;
-
-# Save the original trait_mod:<is> candidates, so we can pass on through
-# all of the trait_mod:<is>'s that cannot be handled here.
-BEGIN my $original_trait_mod_is = &trait_mod:<is>;
-
-module Sub::Memoized:ver<0.0.3>:auth<cpan:ELIZABETH> {
+module Sub::Memoized:ver<0.0.4>:auth<cpan:ELIZABETH> {
 
     # Create the identification string for the capture to serve as key
     my sub fingerprint(Capture:D $capture --> Str:D) {
@@ -33,11 +23,8 @@ module Sub::Memoized:ver<0.0.3>:auth<cpan:ELIZABETH> {
         });
     }
 
-    # Manually mark this proto for export
-    %EXPORT<&trait_mod:<is>> := proto sub trait_mod:<is>(|) {*}
-
     # Handle the "is memoized" / is memoized(Bool:D) cases
-    multi sub trait_mod:<is>(Sub:D \r, Bool:D :$memoized! --> Nil) {
+    multi sub trait_mod:<is>(Sub:D \r, Bool:D :$memoized! --> Nil) is export {
         if $memoized {
             my $name = r.^name;
             memoize(r, {});
@@ -46,17 +33,12 @@ module Sub::Memoized:ver<0.0.3>:auth<cpan:ELIZABETH> {
     }
 
     # Handle the "is memoized(my %h)" case
-    multi sub trait_mod:<is>(Sub:D \r, Hash:D :$memoized! --> Nil) {
+    multi sub trait_mod:<is>(Sub:D \r, Hash:D :$memoized! --> Nil) is export {
         my $name = r.^name;
         memoize(r, $memoized<>);
         r.WHAT.^set_name("$name\(memoized)");
     }
-
-    # Make sure we handle all of the standard traits correctly
-    multi sub trait_mod:<is>(|c) { $original_trait_mod_is(|c) }
 }
-
-sub EXPORT { %EXPORT }
 
 =begin pod
 
@@ -100,7 +82,7 @@ Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018 Elizabeth Mattijsen
+Copyright 2018,2020 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under
 the Artistic License 2.0.

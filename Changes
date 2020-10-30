@@ -2,6 +2,11 @@ Revision history for Sub-Memoized
 
 {{$NEXT}}
 
+0.0.4  2020-10-30T13:48:13+01:00
+    - Simplify exporting of trait candidates
+    - Add GitHub workflows testing
+    - Update copyright year
+
 0.0.3  2018-08-01T15:53:59+02:00
     - Fixed tagline that was a copy-pasto
 
