@@ -2,6 +2,12 @@ Revision history for Sub-Memoized
 
 {{$NEXT}}
 
+0.0.5  2021-09-10T11:37:56+02:00
+    - Change file extension to .rakumod
+    - Migrate to zef ecosystem
+    - Update email address
+    - Update copyright year
+
 0.0.4  2020-10-30T13:48:13+01:00
     - Simplify exporting of trait candidates
     - Add GitHub workflows testing

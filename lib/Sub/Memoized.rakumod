@@ -1,6 +1,6 @@
-use v6.c;
+use v6.d;
 
-module Sub::Memoized:ver<0.0.4>:auth<cpan:ELIZABETH> {
+module Sub::Memoized:ver<0.0.5>:auth<zef:lizmat> {
 
     # Create the identification string for the capture to serve as key
     my sub fingerprint(Capture:D $capture --> Str:D) {
@@ -75,14 +75,14 @@ crafted hash, such as one made with C<Hash::LRU>.
 
 =head1 AUTHOR
 
-Elizabeth Mattijsen <liz@wenzperl.nl>
+Elizabeth Mattijsen <liz@raku.rocks>
 
 Source can be located at: https://github.com/lizmat/Sub-Memoized . Comments and
 Pull Requests are welcome.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018,2020 Elizabeth Mattijsen
+Copyright 2018, 2020, 2021 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under
 the Artistic License 2.0.

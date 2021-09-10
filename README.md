@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/lizmat/Sub-Memoized/workflows/test/badge.svg)](https://github.com/lizmat/Sub-Memoized/actions)
+
 NAME
 ====
 
@@ -31,14 +33,14 @@ Optionally, you can specify a hash that will serve as the cache. This allows lat
 AUTHOR
 ======
 
-Elizabeth Mattijsen <liz@wenzperl.nl>
+Elizabeth Mattijsen <liz@raku.rocks>
 
 Source can be located at: https://github.com/lizmat/Sub-Memoized . Comments and Pull Requests are welcome.
 
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2018,2020 Elizabeth Mattijsen
+Copyright 2018, 2020, 2021 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
