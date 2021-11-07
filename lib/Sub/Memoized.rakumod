@@ -1,43 +1,38 @@
-use v6.d;
-
-module Sub::Memoized:ver<0.0.5>:auth<zef:lizmat> {
-
-    # Create the identification string for the capture to serve as key
-    my sub fingerprint(Capture:D $capture --> Str:D) {
-        my str @parts = $capture.list.map: *<>.WHICH.Str;
-        @parts.push('|');  # don't allow positionals to bleed into nameds
-        for $capture.hash -> $pair {
-            @parts.push( $pair.key );  # key is always a string with nameds
-            @parts.push( $pair.value<>.WHICH.Str );
-        }
-        @parts.join('|')
+# Create the identification string for the capture to serve as key
+my sub fingerprint(Capture:D $capture --> Str:D) {
+    my str @parts = $capture.list.map: *<>.WHICH.Str;
+    @parts.push('|');  # don't allow positionals to bleed into nameds
+    for $capture.hash -> $pair {
+        @parts.push( $pair.key );  # key is always a string with nameds
+        @parts.push( $pair.value<>.WHICH.Str );
     }
+    @parts.join('|')
+}
 
-    # Perform the actual wrapping of the sub to have it memoized
-    my sub memoize(\r, \cache --> Nil) {
-        r.wrap(-> |c {
-            my $key := fingerprint(c);
-            cache.EXISTS-KEY($key)
-              ?? cache.AT-KEY($key)
-              !! cache.BIND-KEY($key,callsame);
-        });
-    }
+# Perform the actual wrapping of the sub to have it memoized
+my sub memoize(\r, \cache --> Nil) {
+    r.wrap(-> |c {
+        my $key := fingerprint(c);
+        cache.EXISTS-KEY($key)
+          ?? cache.AT-KEY($key)
+          !! cache.BIND-KEY($key,callsame);
+    });
+}
 
-    # Handle the "is memoized" / is memoized(Bool:D) cases
-    multi sub trait_mod:<is>(Sub:D \r, Bool:D :$memoized! --> Nil) is export {
-        if $memoized {
-            my $name = r.^name;
-            memoize(r, {});
-            r.WHAT.^set_name("$name\(memoized)");
-        }
-    }
-
-    # Handle the "is memoized(my %h)" case
-    multi sub trait_mod:<is>(Sub:D \r, Hash:D :$memoized! --> Nil) is export {
+# Handle the "is memoized" / is memoized(Bool:D) cases
+multi sub trait_mod:<is>(Sub:D \r, Bool:D :$memoized! --> Nil) is export {
+    if $memoized {
         my $name = r.^name;
-        memoize(r, $memoized<>);
+        memoize(r, {});
         r.WHAT.^set_name("$name\(memoized)");
     }
+}
+
+# Handle the "is memoized(my %h)" case
+multi sub trait_mod:<is>(Sub:D \r, Hash:D :$memoized! --> Nil) is export {
+    my $name = r.^name;
+    memoize(r, $memoized<>);
+    r.WHAT.^set_name("$name\(memoized)");
 }
 
 =begin pod
@@ -72,6 +67,9 @@ input parameters will always produce the same result).
 Optionally, you can specify a hash that will serve as the cache.  This
 allows later access to the generated results.  Or you can specify a specially
 crafted hash, such as one made with C<Hash::LRU>.
+
+Please note that if you do not use a store that is thread-safe, the memoization
+will not be thread-safe either.  This is the default.
 
 =head1 AUTHOR
 
