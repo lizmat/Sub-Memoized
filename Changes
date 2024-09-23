@@ -1,6 +1,8 @@
 Revision history for Sub-Memoized
 
 {{$NEXT}}
+
+0.0.7  2024-09-23T16:17:06+02:00
     - Modernize pod and test file extension
     - Add CI badges for each OS
     - Add sponsor button and link
