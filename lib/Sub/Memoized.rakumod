@@ -43,20 +43,24 @@ Sub::Memoized - trait for memoizing calls to subroutines
 
 =head1 SYNOPSIS
 
-  use Sub::Memoized;
+=begin code :lang<raku>
 
-  sub a($a,$b) is memoized {
-      # do some expensive calculation
-  }
+use Sub::Memoized;
 
-  sub b($a, $b) is memoized( my %cache ) {
-      # do some expensive calculation with direct access to cache
-  }
+sub a($a,$b) is memoized {
+  # do some expensive calculation
+}
 
-  use Hash::LRU;
-  sub c($a, $b) is memoized( my %cache is LRU( elements => 2048 ) ) {
-      # do some expensive calculation, keep last 2048 results returned
-  }
+sub b($a, $b) is memoized( my %cache ) {
+  # do some expensive calculation with direct access to cache
+}
+
+use Hash::LRU;
+sub c($a, $b) is memoized( my %cache is LRU( elements => 2048 ) ) {
+  # do some expensive calculation, keep last 2048 results returned
+}
+
+=end code
 
 =head1 DESCRIPTION
 
@@ -68,8 +72,8 @@ Optionally, you can specify a hash that will serve as the cache.  This
 allows later access to the generated results.  Or you can specify a specially
 crafted hash, such as one made with C<Hash::LRU>.
 
-Please note that if you do not use a store that is thread-safe, the memoization
-will not be thread-safe either.  This is the default.
+Please note that if you do B<not> use a store that is thread-safe, the
+memoization will B<not> be thread-safe either.  This is the default.
 
 =head1 AUTHOR
 
@@ -78,13 +82,16 @@ Elizabeth Mattijsen <liz@raku.rocks>
 Source can be located at: https://github.com/lizmat/Sub-Memoized . Comments and
 Pull Requests are welcome.
 
+If you like this module, or what I'm doing more generally, committing to a
+L<small sponsorship|https://github.com/sponsors/lizmat/>  would mean a great
+deal to me!
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2018, 2020, 2021 Elizabeth Mattijsen
+Copyright 2018, 2020, 2021, 2024 Elizabeth Mattijsen
 
-This library is free software; you can redistribute it and/or modify it under
-the Artistic License 2.0.
+This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
 =end pod
 
-# vim: ft=perl6 expandtab sw=4
+# vim: expandtab shiftwidth=4
