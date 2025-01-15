@@ -10,88 +10,46 @@ my sub fingerprint(Capture:D $capture --> Str:D) {
 }
 
 # Perform the actual wrapping of the sub to have it memoized
-my sub memoize(\r, \cache --> Nil) {
+my sub memoize(\r, \cache, &keyer --> Nil) {
     r.wrap(-> |c {
-        my $key := fingerprint(c);
+        my $key := keyer(c);
         cache.EXISTS-KEY($key)
           ?? cache.AT-KEY($key)
           !! cache.BIND-KEY($key,callsame);
     });
+    r.WHAT.^set_name(r.^name ~ '(memoized)');
 }
 
 # Handle the "is memoized" / is memoized(Bool:D) cases
-multi sub trait_mod:<is>(Sub:D \r, Bool:D :$memoized! --> Nil) is export {
-    if $memoized {
-        my $name = r.^name;
-        memoize(r, {});
-        r.WHAT.^set_name("$name\(memoized)");
-    }
+multi sub trait_mod:<is>(
+  Sub:D  \r,
+  Bool:D :$memoized!,
+--> Nil) is export {
+    memoize(r, {}, &fingerprint) if $memoized;
 }
 
 # Handle the "is memoized(my %h)" case
-multi sub trait_mod:<is>(Sub:D \r, Hash:D :$memoized! --> Nil) is export {
-    my $name = r.^name;
-    memoize(r, $memoized<>);
-    r.WHAT.^set_name("$name\(memoized)");
+multi sub trait_mod:<is>(
+  Sub:D      \r, 
+  Hash:D     :$memoized!,
+--> Nil) is export {
+    memoize(r, $memoized<>, &fingerprint);
 }
 
-=begin pod
-
-=head1 NAME
-
-Sub::Memoized - trait for memoizing calls to subroutines
-
-=head1 SYNOPSIS
-
-=begin code :lang<raku>
-
-use Sub::Memoized;
-
-sub a($a,$b) is memoized {
-  # do some expensive calculation
+# Handle the "is memoized(&fingerprint)" case
+multi sub trait_mod:<is>(
+  Sub:D      \r, 
+  Callable:D :$memoized!,
+--> Nil) is export {
+    memoize(r, {}, $memoized);
 }
 
-sub b($a, $b) is memoized( my %cache ) {
-  # do some expensive calculation with direct access to cache
+# Handle the "is memoized(my %h, &fingerprint)" case
+multi sub trait_mod:<is>(
+  Sub:D  \r, 
+  List:D :$memoized!,
+--> Nil) is export {
+    memoize(r, $memoized[0]<>, $memoized[1] // &fingerprint);
 }
-
-use Hash::LRU;
-sub c($a, $b) is memoized( my %cache is LRU( elements => 2048 ) ) {
-  # do some expensive calculation, keep last 2048 results returned
-}
-
-=end code
-
-=head1 DESCRIPTION
-
-Sub::Memoized provides a C<is memoized> trait on C<Sub>routines as an easy
-way to cache calculations made by that subroutine (assuming a given set of
-input parameters will always produce the same result).
-
-Optionally, you can specify a hash that will serve as the cache.  This
-allows later access to the generated results.  Or you can specify a specially
-crafted hash, such as one made with C<Hash::LRU>.
-
-Please note that if you do B<not> use a store that is thread-safe, the
-memoization will B<not> be thread-safe either.  This is the default.
-
-=head1 AUTHOR
-
-Elizabeth Mattijsen <liz@raku.rocks>
-
-Source can be located at: https://github.com/lizmat/Sub-Memoized . Comments and
-Pull Requests are welcome.
-
-If you like this module, or what I'm doing more generally, committing to a
-L<small sponsorship|https://github.com/sponsors/lizmat/>  would mean a great
-deal to me!
-
-=head1 COPYRIGHT AND LICENSE
-
-Copyright 2018, 2020, 2021, 2024 Elizabeth Mattijsen
-
-This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
-
-=end pod
 
 # vim: expandtab shiftwidth=4

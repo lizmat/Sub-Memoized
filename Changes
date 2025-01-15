@@ -1,6 +1,9 @@
 Revision history for Sub-Memoized
 
 {{$NEXT}}
+    - Add possibility to specify Callable for creating the
+      key with which to cache results
+    - Update copyright year
 
 0.0.7  2024-09-23T16:17:06+02:00
     - Modernize pod and test file extension

@@ -1,9 +1,8 @@
-use v6.c;
 use Test;
 
 use Sub::Memoized;
 
-plan 2 * 3 * 12;
+plan 13 + 2 * 3 * 12;
 
 my $executed = 0;
 my $ft = 42;
@@ -67,4 +66,17 @@ for
     is $executed, 2, "$what: named, did we not execute the body this time";
 }
 
-# vim: ft=perl6 expandtab sw=4
+my int $seen;
+sub foo($a) is memoized({ ++$seen; .[0].Str }) { $a }
+is-deeply foo($_), $_, "foo check $_" for ^5;
+is $seen, 5, 'foo did different keys call keymaker';
+
+$seen = 0;
+my %done;
+sub bar($a) is memoized(%done, { ++$seen; .[0] + 1 }) { $a }
+is-deeply bar($_), $_, "bar check $_" for ^5;
+is $seen, 5, 'bar did different keys call keymaker';
+is-deeply %done, { "1" => 0, "2" => 1, "3" => 2, "4" => 3, "5" => 4 },
+  'did the cache get filled with the right keys';
+
+# vim: expandtab sw=4
