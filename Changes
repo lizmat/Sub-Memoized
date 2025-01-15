@@ -1,6 +1,8 @@
 Revision history for Sub-Memoized
 
 {{$NEXT}}
+
+0.0.8  2025-01-15T15:41:25+01:00
     - Add possibility to specify Callable for creating the
       key with which to cache results
     - Update copyright year
